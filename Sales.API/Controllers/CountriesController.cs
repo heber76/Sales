@@ -39,8 +39,29 @@ namespace Sales.API.Controllers
         public async Task<ActionResult> PostAsyn(Country country)
         {
             _context.Add(country);
-            await _context.SaveChangesAsync();
-            return Ok(country);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Ok(country);
+            }
+            catch (DbUpdateException dbUpdateException)
+            {
+                if (dbUpdateException.InnerException!.Message.Contains("duplicate"))
+                {
+                    return BadRequest("Ya existe un pais con el mismo nombre");
+                }
+                else
+                {
+                    return BadRequest(dbUpdateException.InnerException!.Message);
+                }
+
+            }  
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
 
         }
 
@@ -48,8 +69,30 @@ namespace Sales.API.Controllers
         public async Task<ActionResult> PutAsyn(Country country)
         {
             _context.Update(country);
-            await _context.SaveChangesAsync();
-            return Ok(country);
+
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Ok(country);
+            }
+            catch (DbUpdateException dbUpdateException)
+            {
+                if (dbUpdateException.InnerException!.Message.Contains("duplicate"))
+                {
+                    return BadRequest("Ya existe un pais con el mismo nombre");
+                }
+                else
+                {
+                    return BadRequest(dbUpdateException.InnerException!.Message);
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
 
         }
 
