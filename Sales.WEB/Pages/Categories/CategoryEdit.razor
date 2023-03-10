@@ -1,0 +1,57 @@
+﻿@page "/categories/edit{Id:int}"
+@inject IRepository repository
+@inject SweetAlertService sweetAlertService
+@inject NavigationManager navigationManager
+<h3>Editar Categoría</h3>
+@if (Category is null)
+{
+    <p>Cargando ......</p>
+}
+else
+{
+    <CategoryForm @ref="categoryForm" Category="Category" OnValidSubmit="Edit" ReturnAction="Return">
+
+
+    </CategoryForm>
+
+}
+@code {
+    private Category? Category;
+
+    private CategoryForm? categoryForm; 
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        var responseHTP = await repository.Get<Category>($"/api/categories/{Id}");
+        if (responseHTP.Error)
+        {
+            if (responseHTP.HttpResponseMessage.StatusCode == HttpStatusCode.NotFound)
+            {
+
+                navigationManager.NavigateTo("countries");
+                return;
+            }  
+
+            var messageError = await responseHTP.GetErrorMessageAsync();
+            await sweetAlertService.FireAsync("Error", messageError, SweetAlertIcon.Error);
+        }
+
+        Category = responseHTP.Response;
+    }
+
+
+    private async Task Edit()
+    {
+
+    }
+
+    private void Return()
+    {
+
+        navigationManager.NavigateTo("Categories");
+    }
+
+}

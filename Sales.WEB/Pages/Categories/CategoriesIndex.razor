@@ -1,18 +1,11 @@
-﻿@page "/countries"
+﻿@page "/categories"
 @inject IRepository repository
-@inject NavigationManager navigationManager
 @inject SweetAlertService sweetAlertService
+@inject NavigationManager navigationManager
 
-
-<h3>Países</h3>
-<a class="btn btn-primary mb-3" href="/countries/create">Nuevo País</a>
-<GenericList MyList="Countries">
-    @*<Loading>
-        <p>Cargando.........</p>
-    </Loading>*@
-  @*  <NoRecords>
-        <p>No ay registros en la bd's'</p>
-    </NoRecords>*@
+<h3>Categorías</h3>
+<a class="btn btn-primary" href="/categories/create">Nueva Categoría</a>
+<GenericList MyList="Categories" >
     <Body>
         <table class="table table-striped">
             <thead>
@@ -22,11 +15,11 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var country in Countries!)
+                @foreach (var country in Categories!)
                 {
                     <tr>
                         <td>
-                            <a class="btn btn-warning" href="/countries/edit/@country.Id">Editar</a>
+                            <a class="btn btn-warning" href="/categories/edit/@country.Id">Editar</a>
                             <button class="btn btn-danger" @onclick=@(()=>DeleteAsync(country.Id))>Borrar</button>
                         </td>
 
@@ -40,33 +33,31 @@
         </table>
     </Body>
 </GenericList>
-
-
-
 @code {
-    public List<Country>? Countries { get; set; }
+
+    public List<Category>? Categories { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         await LoadAsync();
-
     }
 
     private async Task LoadAsync()
     {
-        var responseHttp = await repository.Get<List<Country>>("api/countries");
+        var responseHTTP = await repository.Get<List<Category>>("/api/categories");
+        Categories = responseHTTP.Response;
+    } 
 
-        Countries = responseHttp.Response;
-    }
 
     private async Task DeleteAsync(int id)
     {
 
-        var result = await sweetAlertService.FireAsync( new SweetAlertOptions
+        var result = await sweetAlertService.FireAsync(new SweetAlertOptions
             {
-                Title= "Confirmación",
-                Text="¿Esta seguero que quieres borrar el registro",
+                Title = "Confirmación",
+                Text = "¿Esta seguero que quieres borrar el registro",
                 Icon = SweetAlertIcon.Question,
-                ShowCancelButton=true ,
+                ShowCancelButton = true,
                 CancelButtonText = "No",
                 ConfirmButtonText = "Si"
 
@@ -78,7 +69,7 @@
             return;
         }
 
-        var responseHTTP = await repository.Delete($"api/countries/{id}");
+        var responseHTTP = await repository.Delete($"api/categories/{id}");
         if (responseHTTP.Error)
         {
             if (responseHTTP.HttpResponseMessage.StatusCode != HttpStatusCode.NotFound)

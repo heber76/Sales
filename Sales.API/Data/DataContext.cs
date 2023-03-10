@@ -11,7 +11,7 @@ namespace Sales.API.Data
 
         }
 
-
+        public DbSet<Category> Categories { get; set; }
         public DbSet<Country> Countries{ get; set; }
 
 
@@ -19,7 +19,8 @@ namespace Sales.API.Data
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Country>().HasIndex(c =>c.Name).IsUnique();
+            modelBuilder.Entity<Category>().HasIndex(c =>c.Name).IsUnique();
         }
 
     }
-}
+    }
